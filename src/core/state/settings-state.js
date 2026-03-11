@@ -4,6 +4,7 @@ export class SettingsState {
     this.customAssetsDirectory = null;
     this.connectedModeEnabled = false;
     this.connectedModeURL = "";
+    this.customTheme = null;
   }
 
   static fromValues(
@@ -11,12 +12,14 @@ export class SettingsState {
     customAssetsDirectory,
     connectedModeEnabled,
     connectedModeURL,
+    customTheme,
   ) {
     let result = new SettingsState();
     result.gfxDirectory = gfxDirectory;
     result.customAssetsDirectory = customAssetsDirectory;
     result.connectedModeEnabled = connectedModeEnabled;
     result.connectedModeURL = connectedModeURL;
+    result.customTheme = customTheme ?? null;
     return result;
   }
 
@@ -30,6 +33,7 @@ export class SettingsState {
       settings.customAssetsDirectory ?? null,
       settings.connectedModeEnabled ?? false,
       settings.connectedModeURL ?? "",
+      settings.customTheme ?? null,
     );
   }
 }

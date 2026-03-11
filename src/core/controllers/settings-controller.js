@@ -57,6 +57,7 @@ export class SettingsController {
       this._deserializeHandle(serializedSettings.customAssetsDirectory),
       serializedSettings.connectedModeEnabled ?? false,
       serializedSettings.connectedModeURL ?? "",
+      serializedSettings.customTheme ?? null,
     );
   }
 
@@ -68,6 +69,7 @@ export class SettingsController {
       ),
       connectedModeEnabled: this.settingsState.connectedModeEnabled,
       connectedModeURL: this.settingsState.connectedModeURL,
+      customTheme: this.settingsState.customTheme ?? null,
     };
   }
 

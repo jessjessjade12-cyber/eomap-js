@@ -345,8 +345,8 @@ export class PubEditor extends LitElement {
           display: grid;
           grid-template-rows: min-content minmax(0, 1fr) min-content;
           grid-template-columns: 100%;
-          background-color: #1e1e1e;
-          color: #dfdfdf;
+          background-color: var(--pub-bg);
+          color: var(--pub-text);
           overflow: hidden;
           font-size: 12px;
         }
@@ -356,8 +356,8 @@ export class PubEditor extends LitElement {
           grid-template-columns: minmax(0, 1fr) max-content;
           gap: 10px;
           padding: 8px 12px;
-          border-bottom: 1px solid #2d2d2d;
-          background-color: #252526;
+          border-bottom: 1px solid var(--pub-border);
+          background-color: var(--pub-surface-1);
         }
 
         .toolbar-main {
@@ -374,9 +374,9 @@ export class PubEditor extends LitElement {
         }
 
         .tab {
-          border: 1px solid #3b3b3b;
-          background-color: #2b2b2b;
-          color: #cccccc;
+          border: 1px solid var(--pub-border);
+          background-color: var(--pub-button-bg);
+          color: var(--pub-text);
           border-radius: 4px;
           padding: 4px 8px;
           cursor: pointer;
@@ -384,13 +384,13 @@ export class PubEditor extends LitElement {
         }
 
         .tab:hover {
-          background-color: #343434;
+          background-color: var(--pub-button-hover-bg);
         }
 
         .tab[data-active] {
-          border-color: #0e639c;
-          color: #ffffff;
-          background-color: #094771;
+          border-color: var(--pub-accent-bg);
+          color: var(--pub-accent-fg);
+          background-color: var(--pub-accent-bg);
         }
 
         .file-meta {
@@ -398,7 +398,7 @@ export class PubEditor extends LitElement {
           gap: 12px;
           align-items: center;
           min-width: 0;
-          color: #9f9f9f;
+          color: var(--pub-muted);
         }
 
         .filename {
@@ -416,9 +416,9 @@ export class PubEditor extends LitElement {
         }
 
         .action-btn {
-          border: 1px solid #3b3b3b;
-          background-color: #2b2b2b;
-          color: #e3e3e3;
+          border: 1px solid var(--pub-button-border);
+          background-color: var(--pub-button-bg);
+          color: var(--pub-button-fg);
           border-radius: 4px;
           padding: 4px 10px;
           cursor: pointer;
@@ -427,7 +427,7 @@ export class PubEditor extends LitElement {
         }
 
         .action-btn:hover {
-          background-color: #333333;
+          background-color: var(--pub-button-hover-bg);
         }
 
         .action-btn:disabled {
@@ -444,22 +444,22 @@ export class PubEditor extends LitElement {
         .list-pane {
           display: grid;
           grid-template-rows: min-content minmax(0, 1fr);
-          border-right: 1px solid #2d2d2d;
+          border-right: 1px solid var(--pub-border);
           min-height: 0;
-          background-color: #202020;
+          background-color: var(--pub-surface-2);
         }
 
         .filter-box {
-          border-bottom: 1px solid #2d2d2d;
+          border-bottom: 1px solid var(--pub-border);
           padding: 8px;
         }
 
         .filter-input {
           width: 100%;
           box-sizing: border-box;
-          background-color: #2b2b2b;
-          border: 1px solid #3d3d3d;
-          color: #e3e3e3;
+          background-color: var(--pub-input-bg);
+          border: 1px solid var(--pub-input-border);
+          color: var(--pub-input-fg);
           border-radius: 4px;
           padding: 6px 8px;
           outline: none;
@@ -467,7 +467,7 @@ export class PubEditor extends LitElement {
         }
 
         .filter-input:focus {
-          border-color: #0e639c;
+          border-color: var(--pub-accent-bg);
         }
 
         .record-list {
@@ -478,7 +478,7 @@ export class PubEditor extends LitElement {
         .record-item {
           border: 0;
           background-color: transparent;
-          color: #d8d8d8;
+          color: var(--pub-text);
           width: 100%;
           text-align: left;
           padding: 7px 10px;
@@ -486,27 +486,27 @@ export class PubEditor extends LitElement {
           display: grid;
           grid-template-columns: min-content minmax(0, 1fr);
           gap: 8px;
-          border-bottom: 1px solid #2a2a2a;
+          border-bottom: 1px solid var(--pub-border);
           align-items: baseline;
         }
 
         .record-item:hover {
-          background-color: #2a2a2a;
+          background-color: var(--pub-hover-bg);
         }
 
         .record-item[data-selected] {
-          background-color: #094771;
-          color: #ffffff;
+          background-color: var(--pub-accent-bg);
+          color: var(--pub-accent-fg);
         }
 
         .record-id {
-          color: #9f9f9f;
+          color: var(--pub-muted);
           font-variant-numeric: tabular-nums;
           min-width: 2.3em;
         }
 
         .record-item[data-selected] .record-id {
-          color: #c6e3ff;
+          color: var(--pub-accent-fg);
         }
 
         .record-name {
@@ -523,27 +523,27 @@ export class PubEditor extends LitElement {
         }
 
         .detail-header {
-          border-bottom: 1px solid #2d2d2d;
+          border-bottom: 1px solid var(--pub-border);
           padding: 8px 12px;
-          color: #a7a7a7;
+          color: var(--pub-muted);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
 
         .preview-strip {
-          border-bottom: 1px solid #2d2d2d;
+          border-bottom: 1px solid var(--pub-border);
           padding: 10px 12px;
           display: flex;
           gap: 10px;
           overflow: auto;
-          background-color: #1f1f1f;
+          background-color: var(--pub-surface-2);
         }
 
         .preview-card {
-          border: 1px solid #313131;
+          border: 1px solid var(--pub-border);
           border-radius: 4px;
-          background-color: #252526;
+          background-color: var(--pub-surface-1);
           min-width: 130px;
           max-width: 180px;
           display: grid;
@@ -553,9 +553,9 @@ export class PubEditor extends LitElement {
 
         .preview-title {
           font-size: 11px;
-          color: #b5b5b5;
+          color: var(--pub-muted);
           padding: 6px 8px;
-          border-bottom: 1px solid #313131;
+          border-bottom: 1px solid var(--pub-border);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -577,7 +577,7 @@ export class PubEditor extends LitElement {
         }
 
         .preview-message {
-          color: #8f8f8f;
+          color: var(--pub-muted);
           font-size: 11px;
           text-align: center;
         }
@@ -602,7 +602,7 @@ export class PubEditor extends LitElement {
         }
 
         .field label {
-          color: #a9a9a9;
+          color: var(--pub-muted);
           font-size: 11px;
           letter-spacing: 0.02em;
         }
@@ -611,9 +611,9 @@ export class PubEditor extends LitElement {
         .number-input {
           width: 100%;
           box-sizing: border-box;
-          background-color: #2b2b2b;
-          border: 1px solid #3d3d3d;
-          color: #e3e3e3;
+          background-color: var(--pub-input-bg);
+          border: 1px solid var(--pub-input-border);
+          color: var(--pub-input-fg);
           border-radius: 4px;
           padding: 6px 8px;
           outline: none;
@@ -622,7 +622,7 @@ export class PubEditor extends LitElement {
 
         .text-input:focus,
         .number-input:focus {
-          border-color: #0e639c;
+          border-color: var(--pub-accent-bg);
         }
 
         .checkbox-row {
@@ -630,36 +630,36 @@ export class PubEditor extends LitElement {
           align-items: center;
           gap: 8px;
           min-height: 30px;
-          border: 1px solid #3d3d3d;
+          border: 1px solid var(--pub-input-border);
           border-radius: 4px;
           padding: 0 8px;
-          background-color: #2b2b2b;
+          background-color: var(--pub-input-bg);
         }
 
         .empty-state {
           display: grid;
           place-items: center;
-          color: #8f8f8f;
+          color: var(--pub-muted);
           padding: 20px;
           text-align: center;
         }
 
         .statusbar {
-          border-top: 1px solid #2d2d2d;
+          border-top: 1px solid var(--pub-border);
           min-height: 24px;
           display: flex;
           align-items: center;
           padding: 0 10px;
-          color: #9f9f9f;
-          background-color: #252526;
+          color: var(--pub-muted);
+          background-color: var(--pub-surface-1);
         }
 
         .statusbar[data-level="error"] {
-          color: #f48771;
+          color: var(--pub-error);
         }
 
         .statusbar[data-level="success"] {
-          color: #89d185;
+          color: var(--pub-success);
         }
       `,
     ];

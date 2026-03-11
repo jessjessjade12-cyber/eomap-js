@@ -41,6 +41,7 @@ import { EMF } from "../data/emf";
 import { EOReader } from "../data/eo-reader";
 import { EOBuilder } from "../data/eo-builder";
 import { CHAR_MAX } from "../data/eo-numeric-limits";
+import { applyCustomTheme } from "../util/vscode-theme-utils";
 
 import { FileSystemProvider } from "../filesystem/file-system-provider";
 
@@ -412,6 +413,8 @@ export class Application extends LitElement {
   }
 
   async manageSettings(previous) {
+    applyCustomTheme(this.settingsState?.customTheme ?? null);
+
     if (!this.fileSystemProvider.supported) {
       return;
     }

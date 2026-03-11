@@ -54,56 +54,56 @@ const eqfTheme = EditorView.theme(
       height: "100%",
       fontSize: "13px",
       fontFamily: "'Source Code Pro', Monaco, Consolas, monospace",
-      backgroundColor: "#282c34",
-      color: "#abb2bf",
+      backgroundColor: "var(--eqf-editor-bg)",
+      color: "var(--eqf-editor-fg)",
     },
     ".cm-scroller": {
       overflow: "auto",
       lineHeight: "1.6",
     },
     ".cm-content": {
-      caretColor: "#528bff",
+      caretColor: "var(--eqf-cursor)",
       padding: "12px 0",
     },
     ".cm-line": {
       padding: "0 16px",
     },
     ".cm-gutters": {
-      backgroundColor: "#21252b",
-      color: "#4b5263",
+      backgroundColor: "var(--eqf-gutter-bg)",
+      color: "var(--eqf-gutter-fg)",
       border: "none",
-      borderRight: "1px solid #181a1f",
+      borderRight: "1px solid var(--eqf-nav-border)",
       minWidth: "48px",
     },
     ".cm-lineNumbers .cm-gutterElement": {
       padding: "0 8px 0 4px",
     },
     ".cm-activeLineGutter": {
-      backgroundColor: "#2c313c",
-      color: "#636d83",
+      backgroundColor: "var(--eqf-gutter-active-bg)",
+      color: "var(--eqf-gutter-active-fg)",
     },
     ".cm-activeLine": {
-      backgroundColor: "rgba(255,255,255,0.04)",
+      backgroundColor: "var(--eqf-line-active-bg)",
     },
     ".cm-selectionBackground": {
-      backgroundColor: "rgba(97,175,239,0.2) !important",
+      backgroundColor: "var(--eqf-selection-bg) !important",
     },
     "&.cm-focused .cm-selectionBackground": {
-      backgroundColor: "rgba(97,175,239,0.25)",
+      backgroundColor: "var(--eqf-selection-focused-bg)",
     },
     ".cm-cursor": {
-      borderLeftColor: "#528bff",
+      borderLeftColor: "var(--eqf-cursor)",
       borderLeftWidth: "2px",
     },
     // Lint squiggles
     ".cm-lintRange-error": {
       backgroundImage: "none",
-      textDecoration: "underline wavy #e06c75",
+      textDecoration: "underline wavy var(--eqf-lint-error)",
       textUnderlineOffset: "3px",
     },
     ".cm-lintRange-warning": {
       backgroundImage: "none",
-      textDecoration: "underline wavy #e5c07b",
+      textDecoration: "underline wavy var(--eqf-lint-warning)",
       textUnderlineOffset: "3px",
     },
     // Lint gutter markers
@@ -115,7 +115,7 @@ const eqfTheme = EditorView.theme(
       width: "8px",
       height: "8px",
       borderRadius: "50%",
-      backgroundColor: "#e06c75",
+      backgroundColor: "var(--eqf-lint-error)",
       display: "block",
       margin: "auto",
     },
@@ -124,18 +124,18 @@ const eqfTheme = EditorView.theme(
       width: "8px",
       height: "8px",
       borderRadius: "50%",
-      backgroundColor: "#e5c07b",
+      backgroundColor: "var(--eqf-lint-warning)",
       display: "block",
       margin: "auto",
     },
     // Tooltips
     ".cm-tooltip": {
-      backgroundColor: "#21252b",
-      border: "1px solid #3e4451",
+      backgroundColor: "var(--eqf-tooltip-bg)",
+      border: "1px solid var(--eqf-tooltip-border)",
       borderRadius: "4px",
       boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
       fontSize: "12px",
-      color: "#abb2bf",
+      color: "var(--eqf-tooltip-fg)",
       padding: "0",
     },
     ".cm-tooltip-lint": {
@@ -152,33 +152,33 @@ const eqfTheme = EditorView.theme(
       "& > ul > li": {
         padding: "3px 10px 3px 6px",
         lineHeight: "1.5",
-        color: "#abb2bf",
+        color: "var(--eqf-tooltip-fg)",
       },
       "& > ul > li[aria-selected]": {
-        backgroundColor: "#2c313c",
-        color: "#61afef",
+        backgroundColor: "var(--eqf-completion-selected-bg)",
+        color: "var(--eqf-completion-selected-fg)",
       },
     },
     ".cm-completionLabel": {
       fontFamily: "'Source Code Pro', Monaco, Consolas, monospace",
     },
     ".cm-completionDetail": {
-      color: "#5c6370",
+      color: "var(--eqf-completion-detail)",
       fontStyle: "normal",
       marginLeft: "6px",
     },
     "li[aria-selected] .cm-completionDetail": {
-      color: "#4b5263",
+      color: "var(--eqf-completion-detail-selected)",
     },
     ".cm-completionInfo": {
-      backgroundColor: "#21252b",
-      border: "1px solid #3e4451",
+      backgroundColor: "var(--eqf-completion-info-bg)",
+      border: "1px solid var(--eqf-completion-info-border)",
       borderRadius: "4px",
       padding: "6px 10px",
       fontSize: "12px",
       maxWidth: "280px",
       lineHeight: "1.5",
-      color: "#abb2bf",
+      color: "var(--eqf-completion-info-fg)",
     },
     // Snippet tab stops
     ".cm-snippetField": {
@@ -186,22 +186,22 @@ const eqfTheme = EditorView.theme(
       borderRadius: "2px",
     },
     ".cm-snippetFieldPosition": {
-      borderLeft: "2px solid #61afef",
+      borderLeft: "2px solid var(--eqf-completion-selected-fg)",
     },
   },
   { dark: true },
 );
 
 const eqfHighlightStyle = HighlightStyle.define([
-  { tag: tags.keyword, color: "#61afef", fontWeight: "700" },
-  { tag: tags.operator, color: "#c678dd", fontWeight: "600" },
-  { tag: tags.string, color: "#98c379" },
-  { tag: tags.number, color: "#d19a66" },
-  { tag: tags.comment, color: "#5c6370", fontStyle: "italic" },
-  { tag: tags.bracket, color: "#56b6c2" },
-  { tag: tags.punctuation, color: "#abb2bf" },
-  { tag: tags.attributeName, color: "#e5c07b" },
-  { tag: tags.variableName, color: "#abb2bf" },
+  { tag: tags.keyword, color: "var(--eqf-keyword)", fontWeight: "700" },
+  { tag: tags.operator, color: "var(--eqf-operator)", fontWeight: "600" },
+  { tag: tags.string, color: "var(--eqf-string)" },
+  { tag: tags.number, color: "var(--eqf-number)" },
+  { tag: tags.comment, color: "var(--eqf-comment)", fontStyle: "italic" },
+  { tag: tags.bracket, color: "var(--eqf-bracket)" },
+  { tag: tags.punctuation, color: "var(--eqf-punctuation)" },
+  { tag: tags.attributeName, color: "var(--eqf-attribute)" },
+  { tag: tags.variableName, color: "var(--eqf-variable)" },
 ]);
 
 function parseNav(text) {
@@ -232,8 +232,8 @@ export class QuestEditor extends LitElement {
           display: grid;
           grid-template-columns: 200px minmax(0, 1fr);
           grid-template-rows: 100%;
-          background-color: #21252b;
-          color: #abb2bf;
+          background-color: var(--eqf-nav-bg);
+          color: var(--eqf-nav-text);
           overflow: hidden;
         }
 
@@ -242,14 +242,14 @@ export class QuestEditor extends LitElement {
         .nav-pane {
           display: grid;
           grid-template-rows: minmax(0, 1fr) min-content;
-          background-color: #21252b;
-          border-right: 1px solid #181a1f;
+          background-color: var(--eqf-nav-bg);
+          border-right: 1px solid var(--eqf-nav-border);
           overflow: hidden;
         }
 
         .nav-count {
           font-weight: 400;
-          color: #5c6370;
+          color: var(--eqf-nav-muted);
         }
 
         .nav-list {
@@ -264,7 +264,7 @@ export class QuestEditor extends LitElement {
           padding: 0 8px 0 16px;
           font-family: "Source Code Pro", Monaco, Consolas, monospace;
           font-size: 12px;
-          color: #abb2bf;
+          color: var(--eqf-nav-text);
           cursor: pointer;
           user-select: none;
           white-space: nowrap;
@@ -275,12 +275,12 @@ export class QuestEditor extends LitElement {
         }
 
         .nav-item:hover {
-          background-color: #2c313c;
+          background-color: var(--eqf-nav-hover-bg);
         }
 
         .nav-item--selected {
-          background-color: #2c313c;
-          color: #61afef;
+          background-color: var(--eqf-nav-selected-bg);
+          color: var(--eqf-nav-selected-fg);
         }
 
         .nav-section-label {
@@ -289,7 +289,7 @@ export class QuestEditor extends LitElement {
           font-weight: 700;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: #5c6370;
+          color: var(--eqf-nav-muted);
           user-select: none;
           display: flex;
           align-items: center;
@@ -297,7 +297,7 @@ export class QuestEditor extends LitElement {
         }
 
         .nav-section-label:not(:first-child) {
-          border-top: 1px solid #181a1f;
+          border-top: 1px solid var(--eqf-nav-border);
           margin-top: 4px;
         }
 
@@ -305,7 +305,7 @@ export class QuestEditor extends LitElement {
           display: flex;
           gap: 6px;
           padding: 8px 10px;
-          border-top: 1px solid #181a1f;
+          border-top: 1px solid var(--eqf-nav-border);
           flex-wrap: wrap;
         }
 
@@ -315,9 +315,9 @@ export class QuestEditor extends LitElement {
           padding: 3px 6px;
           font-size: 11px;
           font-family: inherit;
-          color: #abb2bf;
-          background-color: #2c313c;
-          border: 1px solid #3e4451;
+          color: var(--eqf-button-fg);
+          background-color: var(--eqf-button-bg);
+          border: 1px solid var(--eqf-button-border);
           border-radius: 3px;
           cursor: pointer;
           white-space: nowrap;
@@ -328,8 +328,8 @@ export class QuestEditor extends LitElement {
         }
 
         .nav-btn:hover {
-          background-color: #3e4451;
-          color: #d7dae0;
+          background-color: var(--eqf-button-hover-bg);
+          color: var(--eqf-nav-text);
         }
 
         .nav-btn:disabled {
@@ -350,8 +350,8 @@ export class QuestEditor extends LitElement {
           align-items: center;
           gap: 8px;
           padding: 5px 12px;
-          background-color: #1e2127;
-          border-bottom: 1px solid #181a1f;
+          background-color: var(--eqf-toolbar-bg);
+          border-bottom: 1px solid var(--eqf-toolbar-border);
           min-height: 0;
         }
 
@@ -359,7 +359,7 @@ export class QuestEditor extends LitElement {
           flex: 1;
           font-family: "Source Code Pro", Monaco, Consolas, monospace;
           font-size: 12px;
-          color: #7f848e;
+          color: var(--eqf-filename-fg);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -367,7 +367,7 @@ export class QuestEditor extends LitElement {
 
         .toolbar-status {
           font-size: 12px;
-          color: #98c379;
+          color: var(--eqf-status-fg);
           white-space: nowrap;
         }
 
@@ -381,17 +381,17 @@ export class QuestEditor extends LitElement {
           padding: 3px 10px;
           font-size: 12px;
           font-family: inherit;
-          color: #abb2bf;
+          color: var(--eqf-button-fg);
           background-color: transparent;
-          border: 1px solid #3e4451;
+          border: 1px solid var(--eqf-button-border);
           border-radius: 3px;
           cursor: pointer;
           line-height: 1.4;
         }
 
         .toolbar-btn:hover {
-          background-color: #2c313c;
-          color: #d7dae0;
+          background-color: var(--eqf-button-hover-bg);
+          color: var(--eqf-nav-text);
         }
 
         .toolbar-btn:disabled {
