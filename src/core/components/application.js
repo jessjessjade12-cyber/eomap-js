@@ -6,6 +6,7 @@ import "@spectrum-web-components/dropzone/sp-dropzone.js";
 
 import "./sidebar";
 import "./editor";
+import "./quest-editor";
 import "./infobar";
 import "./entity-editor";
 import "./new-map";
@@ -13,6 +14,7 @@ import "./properties";
 import "./settings";
 import "./about";
 import "./prompt";
+import "./workspace-switcher";
 
 import { Startup } from "./startup";
 import { Palette } from "./palette";
@@ -53,15 +55,16 @@ export class Application extends LitElement {
         color: var(--spectrum-global-color-gray-800);
         width: 100%;
         height: 100%;
+        position: relative;
         display: grid;
         grid-template-rows: min-content 1fr;
         grid-template-columns: min-content minmax(0, 1fr) min-content;
         overflow: hidden;
       }
 
-      eomap-titlebar {
-        grow-row: 1 / 2;
-        grid-column: 1 / 3;
+      eomap-workspace-switcher {
+        grid-row: 1;
+        grid-column: 1 / 4;
         border-bottom: 1px solid var(--spectrum-global-color-gray-200);
       }
 
@@ -110,6 +113,11 @@ export class Application extends LitElement {
         grid-column: 2;
         border-top: 1px solid var(--spectrum-global-color-gray-200);
       }
+
+      eomap-quest-editor {
+        grid-row: 2 / 4;
+        grid-column: 1 / 4;
+      }
     `;
   }
 
@@ -142,6 +150,9 @@ export class Application extends LitElement {
 
   @property({ type: Boolean, reflect: true, attribute: "dragged" })
   isDragged = false;
+
+  @property({ type: String, reflect: true, attribute: "workspace-mode" })
+  workspaceMode = "map";
 
   @state({ type: Number })
   startupStatus = Startup.Status.LOADING_SETTINGS;
@@ -233,8 +244,12 @@ export class Application extends LitElement {
       return;
     }
 
+    if (this.workspaceMode !== "map") {
+      return;
+    }
+
     if (!this.isToolBeingUsed && !event.repeat) {
-      const tool = this.sidebar.getToolKeyForKeybinding(event);
+      const tool = this.sidebar?.getToolKeyForKeybinding(event);
       if (tool) {
         this.selectedTool = tool;
       }
@@ -470,13 +485,14 @@ export class Application extends LitElement {
   }
 
   calculateMaxPaletteWidth() {
+    const sidebarWidth = this.sidebar?.offsetWidth || 0;
     this.maxPaletteWidth = Math.max(
       Palette.MIN_WIDTH,
-      this.clientWidth - this.sidebar.offsetWidth,
+      this.clientWidth - sidebarWidth,
     );
   }
 
-  renderEditor() {
+  renderMapEditor() {
     if (this.validGfx() && this.mapState.loaded) {
       return html`
         <eomap-editor
@@ -514,7 +530,7 @@ export class Application extends LitElement {
     `;
   }
 
-  render() {
+  renderMapWorkspace() {
     return html`
       <eomap-sidebar
         .menubarController=${this.menubarController}
@@ -525,7 +541,7 @@ export class Application extends LitElement {
         @undo=${this.undo}
         @redo=${this.redo}
       ></eomap-sidebar>
-      ${this.renderEditor()}
+      ${this.renderMapEditor()}
       <sp-dropzone
         @sp-dropzone-should-accept=${this.onDropzoneShouldAccept}
         @sp-dropzone-drop=${this.onDropzoneDrop}
@@ -548,6 +564,19 @@ export class Application extends LitElement {
         .zoom=${this.zoom}
         @zoom-changed=${this.onInfoBarZoomChanged}
       ></eomap-infobar>
+    `;
+  }
+
+  renderQuestWorkspace() {
+    return html`
+      <eomap-quest-editor
+        .fileSystemProvider=${this.fileSystemProvider}
+      ></eomap-quest-editor>
+    `;
+  }
+
+  renderSharedOverlays() {
+    return html`
       <eomap-entity-editor
         .tilePos=${this.currentPos}
         @close=${this.onModalClose}
@@ -571,6 +600,19 @@ export class Application extends LitElement {
     `;
   }
 
+  render() {
+    return html`
+      <eomap-workspace-switcher
+        .selected=${this.workspaceMode}
+        @workspace-selected=${this.onWorkspaceSelected}
+      ></eomap-workspace-switcher>
+      ${this.workspaceMode === "map"
+        ? this.renderMapWorkspace()
+        : this.renderQuestWorkspace()}
+      ${this.renderSharedOverlays()}
+    `;
+  }
+
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener("keydown", this.onWindowKeyDown);
@@ -587,6 +629,9 @@ export class Application extends LitElement {
 
   onKeyDown(event) {
     if (!this.keyboardEnabled()) {
+      return;
+    }
+    if (this.workspaceMode !== "map") {
       return;
     }
 
@@ -608,8 +653,8 @@ export class Application extends LitElement {
   }
 
   onWheel(event) {
-    if (event.ctrlKey) {
-      if (this.mapState.zoom !== null) {
+    if (event.ctrlKey && this.workspaceMode === "map") {
+      if (this.mapState.zoom !== null && this.editor) {
         let zoomStep = this.mapState.zoom / (event.deltaY > 0 ? -11 : 10);
         this.editor.updateZoom(this.mapState.zoom + zoomStep);
       }
@@ -637,6 +682,12 @@ export class Application extends LitElement {
 
   onContextMenuClose(_event) {
     this.hasOpenContextMenu = false;
+  }
+
+  onWorkspaceSelected(event) {
+    this.workspaceMode = event.detail;
+    document.activeElement?.blur();
+    this.calculateMaxPaletteWidth();
   }
 
   emfPickerOptions() {
@@ -911,7 +962,7 @@ export class Application extends LitElement {
 
   onInfoBarZoomChanged(event) {
     this.zoom = event.detail;
-    this.editor.updateZoom(this.zoom);
+    this.editor?.updateZoom(this.zoom);
   }
 
   onEntityEditorRequested(event) {

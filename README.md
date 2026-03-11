@@ -5,7 +5,7 @@
 [![Build](https://github.com/Cirras/eomap-js/actions/workflows/build.yml/badge.svg?event=push)](https://github.com/Cirras/eomap-js/actions/workflows/build.yml)
 [![Release](https://github.com/Cirras/eomap-js/actions/workflows/release.yml/badge.svg)](https://github.com/Cirras/eomap-js/actions/workflows/release.yml)
 
-An Endless Map File (EMF) editor written in JavaScript.
+An Endless Map File (EMF) editor and Quest File (EQF) editor written in JavaScript.
 
 ## Requirements
 
@@ -37,6 +37,19 @@ After you run the `npm run dist:web` command, the project will be built into `di
 If you put the contents of the `dist/web` folder in a publicly-accessible location (say something like `https://example.com`), you should be able to open `https://example.com/index.html` and use the application.
 
 Configure your web server to use [ETags](https://en.wikipedia.org/wiki/HTTP_ETag) for cache validation.
+
+## Quest Editor
+
+The application includes a built-in IDE-style editor for Endless Quest Files (EQF), accessible via the workspace switcher in the top bar.
+
+**Features:**
+
+- Syntax highlighting for EQF keywords, actions, rules, strings, numbers, and comments
+- Inline lint diagnostics with wavy squiggles — errors and warnings appear as you type without a separate diagnostic panel
+- Context-aware autocomplete: action names after `action`, rule names after `rule`, and state names after `goto`
+- Left navigator panel listing all `State` and `random` blocks, clickable to jump to any block
+- Add and remove states and random blocks from the navigator
+- Save / Save As / Copy to clipboard
 
 ## Connected Mode
 

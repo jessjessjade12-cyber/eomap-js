@@ -56,6 +56,13 @@
     "worker-loader": "^3.0.8"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.20.1",
+    "@codemirror/commands": "^6.10.2",
+    "@codemirror/language": "^6.12.2",
+    "@codemirror/lint": "^6.9.5",
+    "@codemirror/state": "^6.5.4",
+    "@codemirror/view": "^6.39.17",
+    "@lezer/highlight": "^1.2.3",
     "@mapbox/shelf-pack": "^3.2.0",
     "@spectrum-css/table": "^4.0.15",
     "@spectrum-web-components/bundle": "^0.24.10",
