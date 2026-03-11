@@ -62,6 +62,26 @@ The application also includes a built-in PUB editor workspace for:
 - Add, duplicate, and delete records
 - Edit core fields in a structured form
 
+## Theme Support
+
+EOSTUDIO supports custom themes imported from existing VS Code themes.
+
+### Importing a Theme
+
+1. Open `Settings`.
+2. Open the `Theme` section.
+3. Click `Import VSCode Theme`.
+4. Select one of:
+   - A VS Code theme file (`.json` or `.jsonc`)
+   - A VS Code extension `package.json` that contains `contributes.themes`
+5. Save settings to persist the imported theme.
+
+### Notes
+
+- Theme files with comments/trailing commas are supported.
+- Included theme chains are resolved for desktop imports.
+- If an extension provides multiple themes, EOSTUDIO auto-selects one by default.
+
 ## Connected Mode
 
 In the application settings, you will find a section called `Connected Mode`.
