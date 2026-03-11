@@ -7,6 +7,7 @@ import "@spectrum-web-components/dropzone/sp-dropzone.js";
 import "./sidebar";
 import "./editor";
 import "./quest-editor";
+import "./pub-editor";
 import "./infobar";
 import "./entity-editor";
 import "./new-map";
@@ -118,6 +119,11 @@ export class Application extends LitElement {
         grid-row: 2 / 4;
         grid-column: 1 / 4;
       }
+
+      eomap-pub-editor {
+        grid-row: 2 / 4;
+        grid-column: 1 / 4;
+      }
     `;
   }
 
@@ -129,6 +135,9 @@ export class Application extends LitElement {
 
   @query("eomap-editor")
   editor;
+
+  @query("eomap-pub-editor")
+  pubEditor;
 
   @query("eomap-entity-editor")
   entityEditor;
@@ -575,6 +584,15 @@ export class Application extends LitElement {
     `;
   }
 
+  renderPubWorkspace() {
+    return html`
+      <eomap-pub-editor
+        .fileSystemProvider=${this.fileSystemProvider}
+        .gfxLoader=${this.gfxLoader}
+      ></eomap-pub-editor>
+    `;
+  }
+
   renderSharedOverlays() {
     return html`
       <eomap-entity-editor
@@ -608,7 +626,9 @@ export class Application extends LitElement {
       ></eomap-workspace-switcher>
       ${this.workspaceMode === "map"
         ? this.renderMapWorkspace()
-        : this.renderQuestWorkspace()}
+        : this.workspaceMode === "quest"
+          ? this.renderQuestWorkspace()
+          : this.renderPubWorkspace()}
       ${this.renderSharedOverlays()}
     `;
   }
@@ -736,6 +756,11 @@ export class Application extends LitElement {
   }
 
   async open() {
+    if (this.workspaceMode === "pub") {
+      await this.pubEditor?.openActiveFile();
+      return;
+    }
+
     let fileHandle;
     try {
       [fileHandle] = await this.fileSystemProvider.showOpenFilePicker(
@@ -799,6 +824,11 @@ export class Application extends LitElement {
   }
 
   async save() {
+    if (this.workspaceMode === "pub") {
+      await this.pubEditor?.saveActiveFile();
+      return;
+    }
+
     if (!this.mapState.loaded) {
       return;
     }
@@ -841,6 +871,11 @@ export class Application extends LitElement {
   }
 
   async saveAs() {
+    if (this.workspaceMode === "pub") {
+      await this.pubEditor?.saveActiveFileAs();
+      return;
+    }
+
     if (!this.mapState.loaded) {
       return;
     }
@@ -1074,11 +1109,15 @@ export class Application extends LitElement {
   }
 
   canUndo() {
-    return this.validGfx() && this.hasUndoCommands;
+    return (
+      this.workspaceMode === "map" && this.validGfx() && this.hasUndoCommands
+    );
   }
 
   canRedo() {
-    return this.validGfx() && this.hasRedoCommands;
+    return (
+      this.workspaceMode === "map" && this.validGfx() && this.hasRedoCommands
+    );
   }
 
   updateHasOpenModal() {

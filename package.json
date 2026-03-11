@@ -1,8 +1,8 @@
 {
-  "name": "eomap-js",
+  "name": "eostudio",
   "version": "1.3.2",
-  "productName": "Endless Map Editor",
-  "description": "Endless Online Mapper",
+  "productName": "EOSTUDIO",
+  "description": "EOSTUDIO",
   "main": "dist/electron/main.js",
   "scripts": {
     "start": "npm run start:electron",
@@ -70,6 +70,7 @@
     "crc-32": "^1.2.2",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.6.2",
+    "eolib": "^2.0.1",
     "eventemitter3": "^5.0.1",
     "idb-keyval": "^6.2.2",
     "phaser": "^3.55.2",

@@ -153,7 +153,7 @@ export class MenubarController extends EventEmitter {
   generateAppMenu() {
     return new MenuState([
       new MenuItemState()
-        .withLabel("About Endless Map Editor")
+        .withLabel("About EOSTUDIO")
         .withEventType(MenuEvent.About)
         .withEnabled(this.canShowAbout),
       new DividerMenuItemState(),
@@ -186,7 +186,7 @@ export class MenubarController extends EventEmitter {
         .withLabel("&New File...")
         .withEventType(MenuEvent.NewFile)
         .withKeybinding("CommandOrControl+Alt+N")
-        .withEnabled(this.canOpenMaps),
+        .withEnabled(this.canCreateNewMap),
     ];
 
     if (isElectron()) {
@@ -209,7 +209,7 @@ export class MenubarController extends EventEmitter {
       new SubmenuMenuItemState()
         .withLabel("Open &Recent")
         .withMenu(this.generateRecentFilesMenu())
-        .withEnabled(this.canOpenMaps),
+        .withEnabled(this.canOpenRecentMaps),
       new DividerMenuItemState(),
       new MenuItemState()
         .withLabel("&Save")
@@ -293,7 +293,7 @@ export class MenubarController extends EventEmitter {
           .withLabel(escapeMnemonics(handle.path))
           .withEventType(MenuEvent.OpenRecent)
           .withEventDetail(index)
-          .withEnabled(this.canOpenMaps),
+          .withEnabled(this.canOpenRecentMaps),
       );
 
     if (items.length > 0) {
@@ -497,7 +497,23 @@ export class MenubarController extends EventEmitter {
     return !this.hasOpenOverlay;
   }
 
+  get canCreateNewMap() {
+    return this.application.workspaceMode === "map" && !this.hasOpenOverlay;
+  }
+
+  get canOpenRecentMaps() {
+    return this.application.workspaceMode !== "pub" && !this.hasOpenOverlay;
+  }
+
   get canSaveMaps() {
+    if (this.application.workspaceMode === "pub") {
+      return (
+        this.application.fileSystemProvider?.supported &&
+        this.windowVisible &&
+        !this.hasOpenOverlay
+      );
+    }
+
     return (
       this.application.mapState.loaded &&
       this.windowVisible &&
@@ -507,6 +523,7 @@ export class MenubarController extends EventEmitter {
 
   get canAccessMapProperties() {
     return (
+      this.application.workspaceMode === "map" &&
       this.application.validGfx() &&
       this.application.mapState.loaded &&
       this.windowVisible &&
@@ -544,6 +561,7 @@ export class MenubarController extends EventEmitter {
 
   canToggleLayerVisibility(flag) {
     return (
+      this.application.workspaceMode === "map" &&
       !this.layerVisibility.isFlagOverridden(flag) &&
       this.windowVisible &&
       !this.hasOpenOverlay

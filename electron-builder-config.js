@@ -1,5 +1,5 @@
 module.exports = {
-  appId: "dev.eomap.app",
+  appId: "dev.eostudio.app",
   directories: {
     output: "dist/electron",
   },
@@ -28,7 +28,7 @@ module.exports = {
     },
   },
   win: {
-    executableName: "eomap-js",
+    executableName: "eostudio",
   },
   mac: {
     category: "public.app-category.developer-tools",
@@ -36,7 +36,7 @@ module.exports = {
   },
   nsis: {
     oneClick: false,
-    shortcutName: "Endless Map Editor",
-    uninstallDisplayName: "Endless Map Editor",
+    shortcutName: "EOSTUDIO",
+    uninstallDisplayName: "EOSTUDIO",
   },
 };

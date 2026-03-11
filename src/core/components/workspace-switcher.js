@@ -63,6 +63,7 @@ export class WorkspaceSwitcher extends LitElement {
       <div class="buttons">
         ${this.renderButton("Map", "map")}
         ${this.renderButton("Quest", "quest")}
+        ${this.renderButton("Pub", "pub")}
       </div>
     `;
   }

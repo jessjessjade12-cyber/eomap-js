@@ -9,6 +9,6 @@ export function titleFromMapState(mapState) {
     title += mapState.filename;
     title += " — ";
   }
-  title += "Endless Map Editor";
+  title += "EOSTUDIO";
   return title;
 }

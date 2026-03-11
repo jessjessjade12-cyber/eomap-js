@@ -136,7 +136,7 @@ export class Titlebar extends LitElement {
   inactive = false;
 
   @property({ type: String })
-  title = "Endless Map Editor";
+  title = "EOSTUDIO";
 
   @property({ type: Boolean })
   maximized = false;

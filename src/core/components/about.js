@@ -57,7 +57,7 @@ export class About extends LitElement {
           }
         </style>
         <div class="icon-container">${unsafeHTML(AppIcon)}</div>
-        <h3 class="name">eomap-js</h3>
+        <h3 class="name">EOSTUDIO</h3>
         <p class="version">version ${NPM_VERSION}</p>
         <div class="button-container">
           <sp-button variant="secondary" slot="button" @click=${this.close}>

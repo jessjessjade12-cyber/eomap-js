@@ -1,11 +1,6 @@
-![eomap-js](https://github.com/cirras/eomap-js/blob/master/docs/images/header.svg)
+# EOSTUDIO
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Cirras_eomap-js&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Cirras_eomap-js)
-[![Format](https://github.com/Cirras/eomap-js/actions/workflows/format.yml/badge.svg?event=push)](https://github.com/Cirras/eomap-js/actions/workflows/format.yml)
-[![Build](https://github.com/Cirras/eomap-js/actions/workflows/build.yml/badge.svg?event=push)](https://github.com/Cirras/eomap-js/actions/workflows/build.yml)
-[![Release](https://github.com/Cirras/eomap-js/actions/workflows/release.yml/badge.svg)](https://github.com/Cirras/eomap-js/actions/workflows/release.yml)
-
-An Endless Map File (EMF) editor and Quest File (EQF) editor written in JavaScript.
+EOSTUDIO is an Endless Online content studio with built-in editors for map (`EMF`), quest (`EQF`), and pub (`EIF/ENF/ECF/ESF`) files.
 
 ## Requirements
 
@@ -51,6 +46,22 @@ The application includes a built-in IDE-style editor for Endless Quest Files (EQ
 - Add and remove states and random blocks from the navigator
 - Save / Save As / Copy to clipboard
 
+## Pub Editor
+
+The application also includes a built-in PUB editor workspace for:
+
+- `EIF` (items)
+- `ENF` (NPCs)
+- `ECF` (classes)
+- `ESF` (skills)
+
+**Features:**
+
+- Load and save each PUB type independently
+- Search/filter records by ID or name
+- Add, duplicate, and delete records
+- Edit core fields in a structured form
+
 ## Connected Mode
 
 In the application settings, you will find a section called `Connected Mode`.
@@ -72,7 +83,7 @@ Currently, the steps for creating your own Mapper Service are:
 
 ### Forced Connected Mode
 
-If you're hosting an instance of eomap-js and want to lock it to a particular remote Mapper Service, then you can use the `FORCE_CONNECTED_MODE_URL` environment variable.
+If you're hosting an instance of EOSTUDIO and want to lock it to a particular remote Mapper Service, then you can use the `FORCE_CONNECTED_MODE_URL` environment variable.
 
 When `FORCE_CONNECTED_MODE_URL` is defined, Connected Mode will be forcibly enabled and the `Mapper Service URL` will be locked to the specified URL.
 

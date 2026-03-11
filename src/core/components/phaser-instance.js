@@ -41,7 +41,7 @@ export class PhaserInstance extends LitElement {
     // HACK: checkFramebufferStatus is pretty expensive and gets called every
     //       time a framebuffer is created by Phaser's WebGLRenderer.
     //
-    //       eomap-js uses RenderTextures for the eomap and cursor components,
+    //       EOSTUDIO uses RenderTextures for the eomap and cursor components,
     //       which use framebuffers under the hood on WebGL.
     //
     //       In the interest of performance, we're going to just fudge the
