@@ -544,9 +544,9 @@ export class QuestEditor extends LitElement {
           indentUnit.of("\t"),
           keymap.of([
             ...closeBracketsKeymap,
+            ...completionKeymap,
             ...defaultKeymap,
             ...historyKeymap,
-            ...completionKeymap,
             indentWithTab,
           ]),
           eqfLanguage,
