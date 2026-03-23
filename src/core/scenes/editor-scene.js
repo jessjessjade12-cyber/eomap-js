@@ -1,5 +1,12 @@
 import { DrawCommand } from "../command/draw-command";
 import { FillCommand } from "../command/fill-command";
+// the undo stuff
+import { PlaceLightCommand } from "../command/point-light-command";
+import {
+  DEFAULT_POINT_LIGHT_RADIUS,
+  DEFAULT_POINT_LIGHT_INTENSITY,
+  DEFAULT_POINT_LIGHT_COLOUR,
+} from "../data/eo-lighting";
 import { TilePosState } from "../state/tilepos-state";
 import { EvictingTextureCache } from "../gfx/texture-cache";
 
@@ -19,12 +26,6 @@ import { EntityCommand } from "../command/entity-command";
 import { MapPropertiesState } from "../state/map-properties-state";
 import { PropertiesCommand } from "../command/properties-command";
 import { isMac } from "../util/platform-utils";
-
-import {
-  DEFAULT_POINT_LIGHT_RADIUS,
-  DEFAULT_POINT_LIGHT_INTENSITY,
-  DEFAULT_POINT_LIGHT_COLOUR,
-} from "../data/eo-lighting";
 
 const Axis = {
   X: 0,
@@ -408,12 +409,15 @@ export class EditorScene extends Phaser.Scene {
 
   doPlaceLightCommand() {
     let pos = this.getDrawPos();
-    this.map.emf.pointLights.add(
-      pos.x,
-      pos.y,
-      DEFAULT_POINT_LIGHT_RADIUS,
-      DEFAULT_POINT_LIGHT_INTENSITY,
-      DEFAULT_POINT_LIGHT_COLOUR,
+    this.commandInvoker.add(
+      new PlaceLightCommand(
+        this.map.emf.pointLights,
+        pos.x,
+        pos.y,
+        DEFAULT_POINT_LIGHT_RADIUS,
+        DEFAULT_POINT_LIGHT_INTENSITY,
+        DEFAULT_POINT_LIGHT_COLOUR,
+      ),
     );
   }
 
