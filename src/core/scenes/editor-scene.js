@@ -20,6 +20,12 @@ import { MapPropertiesState } from "../state/map-properties-state";
 import { PropertiesCommand } from "../command/properties-command";
 import { isMac } from "../util/platform-utils";
 
+import {
+  DEFAULT_POINT_LIGHT_RADIUS,
+  DEFAULT_POINT_LIGHT_INTENSITY,
+  DEFAULT_POINT_LIGHT_COLOUR,
+} from "../data/eo-lighting";
+
 const Axis = {
   X: 0,
   Y: 1,
@@ -397,6 +403,17 @@ export class EditorScene extends Phaser.Scene {
         drawID,
       ),
       true,
+    );
+  }
+
+  doPlaceLightCommand() {
+    let pos = this.getDrawPos();
+    this.map.emf.pointLights.add(
+      pos.x,
+      pos.y,
+      DEFAULT_POINT_LIGHT_RADIUS,
+      DEFAULT_POINT_LIGHT_INTENSITY,
+      DEFAULT_POINT_LIGHT_COLOUR,
     );
   }
 

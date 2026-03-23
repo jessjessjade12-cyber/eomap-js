@@ -3,6 +3,7 @@ import * as windows1252 from "windows-1252";
 import { decodeString } from "./eo-decode";
 import { encodeString } from "./eo-encode";
 import { findMostFrequent } from "../util/array-utils";
+import { PointLightCollection } from "./eo-lighting";
 
 export const MapType = {
   Normal: 0,
@@ -264,6 +265,7 @@ export class EMF {
     this.items = [];
 
     this.tiles = [];
+    this.pointLights = new PointLightCollection();
   }
 
   static new(width, height, name) {

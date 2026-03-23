@@ -33,8 +33,12 @@ class LayerPreload {
   }
 }
 
+export const LIGHTING_LAYER = 10;
+
 export class PaletteScene extends Phaser.Scene {
   static FILE_BY_LAYER = [3, 4, 5, 6, 6, 7, 3, 22, 5];
+  // Let's define a lighting layer
+  static LIGHTING_LAYER = LIGHTING_LAYER;
 
   constructor(gfxLoader) {
     super("palette");
@@ -109,6 +113,10 @@ export class PaletteScene extends Phaser.Scene {
     }
 
     result.push(this.createSpecLayer());
+    // Ensures the pallete has a valid layer object at index 10.
+    // If we do not do this the lighting tab crashes.
+    // The palette area will just show blank for now.
+    result.push(this.createLightingLayer());
 
     return result;
   }
@@ -162,6 +170,10 @@ export class PaletteScene extends Phaser.Scene {
     }
 
     return layer;
+  }
+
+  createLightingLayer() {
+    return this.add.paletteLayer(this);
   }
 
   selectLayer(layer) {

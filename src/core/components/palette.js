@@ -334,6 +334,7 @@ export class Palette extends PhaserInstance {
       "Shadow",
       "Overlay 2",
       "Special",
+      "Lighting",
     ];
 
     return LAYER_NAMES.map((label, i) => {
