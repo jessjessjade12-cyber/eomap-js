@@ -6,6 +6,7 @@ import {
   DEFAULT_POINT_LIGHT_RADIUS,
   DEFAULT_POINT_LIGHT_INTENSITY,
   DEFAULT_POINT_LIGHT_COLOUR,
+  DEFAULT_POINT_LIGHT_Z,
 } from "../data/eo-lighting";
 import { TilePosState } from "../state/tilepos-state";
 import { EvictingTextureCache } from "../gfx/texture-cache";
@@ -26,6 +27,7 @@ import { EntityCommand } from "../command/entity-command";
 import { MapPropertiesState } from "../state/map-properties-state";
 import { PropertiesCommand } from "../command/properties-command";
 import { isMac } from "../util/platform-utils";
+import { LIGHTING_LAYER } from "./palette-scene";
 
 const Axis = {
   X: 0,
@@ -38,6 +40,15 @@ class AxisLock {
     this.axis = null;
   }
 }
+
+const PREVIEW_POINT_LIGHT_RADIUS_STEP = 1;
+const PREVIEW_POINT_LIGHT_INTENSITY_STEP = 0.1;
+const PREVIEW_POINT_LIGHT_Z_STEP = 4;
+const MIN_PREVIEW_POINT_LIGHT_RADIUS = 1;
+const MAX_PREVIEW_POINT_LIGHT_RADIUS = 30;
+const MIN_PREVIEW_POINT_LIGHT_INTENSITY = 0.05;
+const MAX_PREVIEW_POINT_LIGHT_INTENSITY = 1.0;
+const MIN_PREVIEW_POINT_LIGHT_Z = 0;
 
 export class EditorScene extends Phaser.Scene {
   constructor(gfxLoader) {
@@ -57,6 +68,9 @@ export class EditorScene extends Phaser.Scene {
     this.shiftKey = null;
     this.axisLock = null;
     this.copiedEntities = null;
+    this.previewPointLightRadius = DEFAULT_POINT_LIGHT_RADIUS;
+    this.previewPointLightIntensity = DEFAULT_POINT_LIGHT_INTENSITY;
+    this.previewPointLightZ = DEFAULT_POINT_LIGHT_Z;
 
     this._tempMatrix1 = new Phaser.GameObjects.Components.TransformMatrix();
     this._tempMatrix2 = new Phaser.GameObjects.Components.TransformMatrix();
@@ -86,6 +100,8 @@ export class EditorScene extends Phaser.Scene {
     );
 
     this.mapState.gameObject = this.map;
+    this.onCommandInvokerChange = () => this.map.invalidateCachedFrame();
+    this.commandInvoker.on("change", this.onCommandInvokerChange);
 
     this.tools = this.createTools();
 
@@ -195,6 +211,7 @@ export class EditorScene extends Phaser.Scene {
     target.addEventListener("lostpointercapture", onLostPointerCapture);
 
     this.sys.events.once("destroy", () => {
+      this.commandInvoker.off("change", this.onCommandInvokerChange);
       target.removeEventListener("pointerdown", onPointerDown);
       target.removeEventListener("pointerup", onPointerUp);
       target.removeEventListener("lostpointercapture", onLostPointerCapture);
@@ -208,6 +225,10 @@ export class EditorScene extends Phaser.Scene {
     // This happens for spacebar keyboard events when an action button on the
     // sidebar or palette has focus.
     this.onKeyDown = (event) => {
+      if (this.handlePointLightShortcut(event)) {
+        event.preventDefault();
+        return;
+      }
       if (event.code === "Space") {
         this.spacebarDown = true;
       }
@@ -231,6 +252,7 @@ export class EditorScene extends Phaser.Scene {
   update(time, delta) {
     this.cameraControls.update(delta);
     this.textureCache.update();
+    this.refreshPointLightPreview();
 
     if (this.map.camera.dirty) {
       this.mapState.scrollX = this.map.scrollX;
@@ -302,18 +324,21 @@ export class EditorScene extends Phaser.Scene {
   handlePointerMove(pointer) {
     this.updateOverrideTool(pointer);
     this.tool.pointerMove(this, pointer);
+    this.refreshPointLightPreview();
     this.updateIsToolBeingUsed();
   }
 
   handlePointerDown(pointer) {
     this.updateOverrideTool(pointer);
     this.tool.pointerDown(this, pointer);
+    this.refreshPointLightPreview();
     this.updateIsToolBeingUsed();
   }
 
   handlePointerUp(pointer) {
     this.tool.pointerUp(this, pointer);
     this.updateOverrideTool(pointer);
+    this.refreshPointLightPreview();
     this.updateIsToolBeingUsed();
   }
 
@@ -414,11 +439,85 @@ export class EditorScene extends Phaser.Scene {
         this.map.emf.pointLights,
         pos.x,
         pos.y,
-        DEFAULT_POINT_LIGHT_RADIUS,
-        DEFAULT_POINT_LIGHT_INTENSITY,
+        this.previewPointLightRadius,
+        this.previewPointLightIntensity,
         DEFAULT_POINT_LIGHT_COLOUR,
+        this.previewPointLightZ,
       ),
     );
+    this.map.invalidateCachedFrame();
+  }
+
+  handlePointLightShortcut(event) {
+    const primaryModifier = isMac() ? event.metaKey : event.ctrlKey;
+    if (!primaryModifier || this.selectedLayer !== LIGHTING_LAYER) {
+      return false;
+    }
+
+    switch (event.code) {
+      case "BracketRight":
+        this.previewPointLightRadius = Math.min(
+          MAX_PREVIEW_POINT_LIGHT_RADIUS,
+          this.previewPointLightRadius + PREVIEW_POINT_LIGHT_RADIUS_STEP,
+        );
+        this.refreshPointLightPreview();
+        return true;
+      case "BracketLeft":
+        this.previewPointLightRadius = Math.max(
+          MIN_PREVIEW_POINT_LIGHT_RADIUS,
+          this.previewPointLightRadius - PREVIEW_POINT_LIGHT_RADIUS_STEP,
+        );
+        this.refreshPointLightPreview();
+        return true;
+      case "Equal":
+      case "NumpadAdd":
+        this.previewPointLightIntensity = Math.min(
+          MAX_PREVIEW_POINT_LIGHT_INTENSITY,
+          Math.round(
+            (this.previewPointLightIntensity +
+              PREVIEW_POINT_LIGHT_INTENSITY_STEP) *
+              100,
+          ) / 100,
+        );
+        this.refreshPointLightPreview();
+        return true;
+      case "Minus":
+      case "NumpadSubtract":
+        this.previewPointLightIntensity = Math.max(
+          MIN_PREVIEW_POINT_LIGHT_INTENSITY,
+          Math.round(
+            (this.previewPointLightIntensity -
+              PREVIEW_POINT_LIGHT_INTENSITY_STEP) *
+              100,
+          ) / 100,
+        );
+        this.refreshPointLightPreview();
+        return true;
+      case "Period":
+      case "NumpadDecimal":
+        this.previewPointLightZ = Math.max(
+          MIN_PREVIEW_POINT_LIGHT_Z,
+          this.previewPointLightZ +
+            (event.shiftKey
+              ? -PREVIEW_POINT_LIGHT_Z_STEP
+              : PREVIEW_POINT_LIGHT_Z_STEP),
+        );
+        this.refreshPointLightPreview();
+        return true;
+      case "PageUp":
+        this.previewPointLightZ += PREVIEW_POINT_LIGHT_Z_STEP;
+        this.refreshPointLightPreview();
+        return true;
+      case "PageDown":
+        this.previewPointLightZ = Math.max(
+          MIN_PREVIEW_POINT_LIGHT_Z,
+          this.previewPointLightZ - PREVIEW_POINT_LIGHT_Z_STEP,
+        );
+        this.refreshPointLightPreview();
+        return true;
+      default:
+        return false;
+    }
   }
 
   doFillCommand(drawID) {
@@ -492,7 +591,7 @@ export class EditorScene extends Phaser.Scene {
 
   updateCurrentPos(pointerPos) {
     let worldPos = this.map.camera.getWorldPoint(pointerPos.x, pointerPos.y);
-    let newPos = this.getTilePosFromWorldPos(worldPos);
+    let newPos = this.map.getTilePosFromWorldPos(worldPos);
 
     if (this.currentPos.x !== newPos.x || this.currentPos.y !== newPos.y) {
       this.currentPosDirty = true;
@@ -506,6 +605,27 @@ export class EditorScene extends Phaser.Scene {
 
   updateSelectedLayer() {
     this.map.setSelectedLayer(this.selectedLayer);
+    this.refreshPointLightPreview();
+  }
+
+  refreshPointLightPreview() {
+    if (
+      this.selectedLayer !== LIGHTING_LAYER ||
+      (this.overrideTool || this.selectedTool) !== "draw" ||
+      !this.currentPos?.valid
+    ) {
+      this.map.clearPointLightPreview();
+      return;
+    }
+
+    this.map.setPointLightPreview({
+      x: this.currentPos.x,
+      y: this.currentPos.y,
+      z: this.previewPointLightZ,
+      radius: this.previewPointLightRadius,
+      intensity: this.previewPointLightIntensity,
+      colour: DEFAULT_POINT_LIGHT_COLOUR,
+    });
   }
 
   updateEntityState(newEntityState) {
@@ -563,30 +683,7 @@ export class EditorScene extends Phaser.Scene {
 
   getTilePosFromPointerPos(pointerPos) {
     let worldPos = this.map.camera.getWorldPoint(pointerPos.x, pointerPos.y);
-
-    return this.getTilePosFromWorldPos(worldPos);
-  }
-
-  getTilePosFromWorldPos(worldPos) {
-    let tilePos = new TilePosState();
-    tilePos.x = this.getTileXFromWorldPos(worldPos);
-    tilePos.y = this.getTileYFromWorldPos(worldPos);
-
-    tilePos.valid =
-      tilePos.x >= 0 &&
-      tilePos.x < this.emf.width &&
-      tilePos.y >= 0 &&
-      tilePos.y < this.emf.height;
-
-    return tilePos;
-  }
-
-  getTileXFromWorldPos(worldPos) {
-    return Math.floor(worldPos.y / 32 + (worldPos.x + 32) / 64) - 1;
-  }
-
-  getTileYFromWorldPos(worldPos) {
-    return -Math.floor((worldPos.x + 32) / 64 - worldPos.y / 32);
+    return this.map.getTilePosFromWorldPos(worldPos);
   }
 
   initCameraPosition() {

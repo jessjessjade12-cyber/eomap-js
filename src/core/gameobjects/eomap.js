@@ -1,8 +1,12 @@
 import { arrayEquals, binaryInsert, removeFirst } from "../util/array-utils";
 import { TileSpec } from "../data/emf";
 import { GridType } from "../gfx/texture-cache";
+import { LightingMixin } from "./lighting";
 
 const SECTION_SIZE = 256;
+// Current occlusion scope: only walls/objects participate for now.
+// Additional occluder types are intentionally deferred.
+const OCCLUSION_CASTER_LAYERS = new Set([1, 3, 4]);
 
 const TDG = 0.00000001; // gap between depth of each tile on a layer
 const RDG = 0.001; // gap between depth of each row of tiles
@@ -285,6 +289,11 @@ export class EOMap extends Phaser.GameObjects.GameObject {
       return;
     }
 
+    if (layer === 10) {
+      // Lighting is edited separately from tile draw layers.
+      return;
+    }
+
     throw new Error(`Invalid draw layer: ${layer}`);
   }
 
@@ -297,7 +306,30 @@ export class EOMap extends Phaser.GameObjects.GameObject {
       return this.emf.getTile(x, y).spec;
     }
 
+    if (layer === 10) {
+      // Lighting is edited via point-light commands, not tile draw IDs.
+      return null;
+    }
+
     throw new Error(`Invalid draw layer: ${layer}`);
+  }
+
+  getTilePosFromWorldPos(worldPos) {
+    let x = this.getTileXFromWorldPos(worldPos);
+    let y = this.getTileYFromWorldPos(worldPos);
+    return {
+      x,
+      y,
+      valid: x >= 0 && x < this.emf.width && y >= 0 && y < this.emf.height,
+    };
+  }
+
+  getTileXFromWorldPos(worldPos) {
+    return Math.floor(worldPos.y / 32 + (worldPos.x + 32) / 64) - 1;
+  }
+
+  getTileYFromWorldPos(worldPos) {
+    return -Math.floor((worldPos.x + 32) / 64 - worldPos.y / 32);
   }
 
   setGraphic(x, y, gfx, layer) {
@@ -707,6 +739,7 @@ export class EOMap extends Phaser.GameObjects.GameObject {
     renderTexture.camera.zoom = this.drawScale;
     renderTexture.camera.scrollX = this.scrollX;
     renderTexture.camera.scrollY = this.scrollY;
+
     renderTexture.beginDraw();
 
     let worldPoint = this.camera.getWorldPoint(0, 0);
@@ -727,10 +760,34 @@ export class EOMap extends Phaser.GameObjects.GameObject {
       );
     }
 
+    this.drawPointLightOverlay(
+      renderTexture,
+      drawOffsetX,
+      drawOffsetY,
+      worldPoint.x,
+      worldPoint.y,
+      drawWidth,
+      drawHeight,
+    );
+    this.drawPointLightSourceGlows(renderTexture, drawOffsetX, drawOffsetY);
     renderTexture.endDraw();
   }
 
-  batchDrawFrame(renderTexture, textureFrame, x, y, alpha) {
+  isOcclusionCasterLayer(layer) {
+    return OCCLUSION_CASTER_LAYERS.has(layer);
+  }
+
+  batchDrawFrame(
+    renderTexture,
+    textureFrame,
+    x,
+    y,
+    alpha,
+    tint = 0xffffff,
+    blendMode = Phaser.BlendModes.NORMAL,
+    scaleX = 1.0,
+    scaleY = 1.0,
+  ) {
     x += renderTexture.frame.cutX;
     y += renderTexture.frame.cutY;
 
@@ -738,7 +795,7 @@ export class EOMap extends Phaser.GameObjects.GameObject {
     matrix.copyFrom(renderTexture.camera.matrix);
 
     let spriteMatrix = this._tempMatrix2;
-    spriteMatrix.applyITRS(x, y, 0, 1, 1);
+    spriteMatrix.applyITRS(x, y, 0, scaleX, scaleY);
     spriteMatrix.e -= renderTexture.camera.scrollX;
     spriteMatrix.f -= renderTexture.camera.scrollY;
 
@@ -750,10 +807,7 @@ export class EOMap extends Phaser.GameObjects.GameObject {
     }
 
     if (renderTexture.renderTarget) {
-      let tint =
-        (renderTexture.globalTint >> 16) +
-        (renderTexture.globalTint & 0xff00) +
-        ((renderTexture.globalTint & 0xff) << 16);
+      renderTexture.renderer.setBlendMode(blendMode);
       renderTexture.pipeline.batchTextureFrame(
         textureFrame,
         0,
@@ -764,11 +818,23 @@ export class EOMap extends Phaser.GameObjects.GameObject {
         null,
       );
     } else {
-      this.batchTextureFrameCanvas(renderTexture, textureFrame, matrix, alpha);
+      this.batchTextureFrameCanvas(
+        renderTexture,
+        textureFrame,
+        matrix,
+        alpha,
+        blendMode,
+      );
     }
   }
 
-  batchTextureFrameCanvas(renderTexture, frame, matrix, alpha) {
+  batchTextureFrameCanvas(
+    renderTexture,
+    frame,
+    matrix,
+    alpha,
+    blendMode = Phaser.BlendModes.NORMAL,
+  ) {
     let renderer = renderTexture.renderer;
     let ctx = renderer.currentContext;
 
@@ -782,7 +848,13 @@ export class EOMap extends Phaser.GameObjects.GameObject {
       ctx.save();
 
       matrix.setToContext(ctx);
-      ctx.globalCompositeOperation = "source-over";
+      let compositeOperation = "source-over";
+      if (blendMode === Phaser.BlendModes.ADD) {
+        compositeOperation = "lighter";
+      } else if (blendMode === Phaser.BlendModes.MULTIPLY) {
+        compositeOperation = "multiply";
+      }
+      ctx.globalCompositeOperation = compositeOperation;
       ctx.globalAlpha = alpha;
       ctx.imageSmoothingEnabled = !(
         !renderer.antialias || frame.source.scaleMode
@@ -871,6 +943,8 @@ export class EOMap extends Phaser.GameObjects.GameObject {
       this.cachedFrame.destroy();
     }
 
+    this.destroyLightingState();
+
     super.destroy(fromScene);
   }
 
@@ -932,6 +1006,8 @@ Phaser.Class.mixin(EOMap, [
   Phaser.GameObjects.Components.Depth,
   Phaser.GameObjects.Components.Pipeline,
 ]);
+
+Object.assign(EOMap.prototype, LightingMixin);
 
 Phaser.GameObjects.GameObjectFactory.register(
   "eomap",

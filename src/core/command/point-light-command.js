@@ -4,7 +4,7 @@ import { Command } from "./command";
 // basically - every command must have an execute and an undo
 // enforces the shape
 export class PlaceLightCommand extends Command {
-  constructor(pointLights, x, y, radius, intensity, colour) {
+  constructor(pointLights, x, y, radius, intensity, colour, z) {
     super();
     this.pointLights = pointLights;
     this.x = x;
@@ -12,6 +12,7 @@ export class PlaceLightCommand extends Command {
     this.radius = radius;
     this.intensity = intensity;
     this.colour = colour;
+    this.z = z;
     this.id = null;
   }
 
@@ -22,6 +23,7 @@ export class PlaceLightCommand extends Command {
       this.radius,
       this.intensity,
       this.colour,
+      this.z,
     );
   }
 

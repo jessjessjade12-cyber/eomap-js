@@ -1,12 +1,14 @@
 export const DEFAULT_POINT_LIGHT_RADIUS = 5;
 export const DEFAULT_POINT_LIGHT_INTENSITY = 1.0;
-export const DEFAULT_POINT_LIGHT_COLOUR = 0xffffff;
+export const DEFAULT_POINT_LIGHT_COLOUR = 0xff9040;
+export const DEFAULT_POINT_LIGHT_Z = 24;
 
 // this defines the shape of a single light
 export class PointLight {
-  constructor(x, y, radius, intensity, colour) {
+  constructor(x, y, radius, intensity, colour, z = DEFAULT_POINT_LIGHT_Z) {
     this.x = x;
     this.y = y;
+    this.z = z;
     this.radius = radius;
     this.intensity = intensity;
     this.colour = colour;
@@ -22,9 +24,9 @@ export class PointLightCollection {
     this.nextID = 1;
   }
 
-  add(x, y, radius, intensity, colour) {
+  add(x, y, radius, intensity, colour, z = DEFAULT_POINT_LIGHT_Z) {
     const id = this.nextID++;
-    this.lights.set(id, new PointLight(x, y, radius, intensity, colour));
+    this.lights.set(id, new PointLight(x, y, radius, intensity, colour, z));
     return id;
   }
 
